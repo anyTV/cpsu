@@ -3,17 +3,16 @@ var app = require('http').createServer(handler),
     cudl = require('cuddle')(logger),
     io = require('socket.io')(app),
     fs = require('fs'),
-    streamers,
     recheck;
 
 app.listen(9999, function () {
   console.log('\n---------------------------------------------\nSocket is alive. Port: 9999\n---------------------------------------------\n');
 });
 
-function find_streamers () {
+function find_streamers (data) {
   cudl.get
     .to('http://www.you1tube.com/find_streamers')
-    .send(streamers)
+    .send(data)
     .then(function (err, result) {
       if (io.engine.clients) {
         if (err) {
@@ -25,9 +24,9 @@ function find_streamers () {
     });
 }
 
-function start_iteration () {
+function start_iteration (data) {
   recheck = function () {
-    find_streamers();
+    find_streamers(data);
     setTimeout(recheck, 900000);
     // 900000 = 15 minutes (check streamers if they are online every 15 minutes)
   };
@@ -50,7 +49,6 @@ function handler (req, res) {
 
 io.on('connection', function (socket) {
   socket.on('user_favorite_streamers', function (data) {
-    streamers = data;
-    start_iteration();
+    start_iteration(data);
   });
 });
