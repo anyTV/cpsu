@@ -11,7 +11,7 @@ app.listen(9999);
 
 function find_streamers (data) {
   cudl.get
-    .to('http://localhost/find_streamers')
+    .to('http://www.you1tube.com:9999/find_streamers')
     .send(data)
     .then(function (err, result) {
       if (io.engine.clients) {
