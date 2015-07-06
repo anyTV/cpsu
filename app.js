@@ -4,13 +4,14 @@ var app = require('http').createServer(handler),
     io = require('socket.io')(app),
     fs = require('fs'),
     streamers,
-    recheck;
+    recheck,
+    timer;
 
 app.listen(9999);
 
 function find_streamers (data) {
   cudl.get
-    .to('http://www.you1tube.com:9999/find_streamers')
+    .to('http://localhost/find_streamers')
     .send(data)
     .then(function (err, result) {
       if (io.engine.clients) {
@@ -23,13 +24,12 @@ function find_streamers (data) {
     });
 }
 
-function check () {
-  if (streamers) {
-    find_streamers(streamers);
-  }
-  setTimeout(check, 900000);
+function start_check (data) {
+  clearInterval(timer);
+  find_streamers(data);
+  setTimeout(start_check, 900000);
 }
-check();
+start_check();
 
 function handler (req, res) {
     fs.readFile(__dirname + '/index.html',
@@ -49,3 +49,9 @@ io.on('connection', function (socket) {
     streamers = data;
   });
 });
+
+timer = setInterval(function () {
+  if (streamers) {
+    start_check(streamers);
+  }
+}, 1000);
