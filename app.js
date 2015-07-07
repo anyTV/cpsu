@@ -51,4 +51,5 @@ function start_finding () {
         });
     }).
     commit();
+    setTimeout(start_finding, 900000);
 }
