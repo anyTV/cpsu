@@ -49,8 +49,8 @@ function start_finding() {
                         io.emit('online_streamers', result);
                     }
                 });
-        }).
-    commit();
+        })
+        .commit();
     setTimeout(start_finding, 900000);
 }
 
